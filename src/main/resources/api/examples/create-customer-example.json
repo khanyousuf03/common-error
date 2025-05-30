@@ -1,0 +1,19 @@
+{
+  "statusCode": "201",
+  "correlationId": "6d5d83d0-2df4-11ef-9971-02a584aeafd9",
+  "statusType": "HTTP:OK",
+  "statusMessage": "The request has succeeded.",
+  "timestamp": "2020-06-15T15:13:10",
+  "data": {
+            "id": "id213",
+            "address1": "12368 Morisville",
+            "city": "Raleigh",
+            "state": "NC",
+            "country": "US",
+            "zip": 20003,
+            "phone": "911234567890",
+            "email": "example@abc.com",
+            "contactPreference": "Email",
+            "name": "John Doe"
+    }
+}

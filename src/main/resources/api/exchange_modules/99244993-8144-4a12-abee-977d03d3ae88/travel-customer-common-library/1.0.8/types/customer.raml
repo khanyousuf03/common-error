@@ -1,0 +1,45 @@
+#%RAML 1.0 DataType
+type: object
+properties:
+    id:
+        description: Customer ID
+        example: id213
+        type: string
+    address1:
+            description: Customer's address
+            example: 12368 Morisville
+            type: string
+    city:
+            description: Customer's city
+            example: Raleigh
+            type: string
+    state:
+            description: Customer's state
+            example: NC
+            type: string
+    country:
+            description: Customer's country
+            example: US
+            type: string
+    zip:
+            description: Zip code
+            example: 20003
+            type: number
+    phone:
+            description: Phone number
+            example: "911234567890"
+            type: string
+    email:
+            description: email address
+            example: example@abc.com
+            type: string
+    contactPreference:
+            enum:
+              - Phone
+              - Email
+            example: Email
+            type: string
+    name:
+            description: Customer Name
+            example: John Doe
+            type: string

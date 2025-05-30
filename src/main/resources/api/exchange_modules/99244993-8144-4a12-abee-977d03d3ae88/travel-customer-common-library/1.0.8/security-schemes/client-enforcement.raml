@@ -1,0 +1,28 @@
+#%RAML 1.0 SecurityScheme
+type: x-client-enforcement
+describedBy:
+  headers:
+    client_id:
+      description: Client_Id too be passed for authenticating the API
+      type: string
+      required: true
+      example: 1234567890abcdABCDE12345
+    client_secret:
+      description: Clien_Secret too be passed for authenticating the API
+      type: string
+      required: true
+      example: 1234567890abcdABCDE12345
+  responses:
+    401:
+      body:
+        application/json:
+          properties:
+            error:
+              type: string
+              description: A description of the error.
+              example: Client Credentials Invalid
+          example: |
+            {
+              "error": "Client Credentials Invalid"
+            }
+        

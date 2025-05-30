@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd">
+	
+	<error-handler name="common-error-handler" doc:id="2235bee2-4c58-4ae6-895e-b62077c032c1">
+		<!-- APIKit router related exceptions -->
+		<on-error-continue type="APIKIT:BAD_REQUEST" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="eefbec54-5ae0-4238-8e57-fb2d93f6f467" >
+			<set-variable value="#[400]" doc:name="set-the-http-status-400" doc:id="c8368502-9da5-48f7-85b1-3a929dcf3178" variableName="httpStatus"/>
+    	  	<set-variable value="#[Mule::p('APIKIT_BAD_REQUEST') ++ &quot;:&quot; ++ error.description]" doc:name="set-the-http-status-message-400" doc:id="8663da72-4e97-4a11-b23e-eb49c2046eae" variableName="statusMessage"/>
+			<flow-ref doc:name="global-error-response" doc:id="a8b5210a-52bf-44ac-b1c7-833045339790" name="global-error-response"/>
+		</on-error-continue>
+		<on-error-continue type="APIKIT:METHOD_NOT_ALLOWED" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="0558bf87-ab0f-4aef-b98a-5a8e4d534c62" >
+			<set-variable value="#[405]" doc:name="set-the-http-status-405" doc:id="77f4c7f0-679b-4009-92df-230fa92fd84f" variableName="httpStatus" />
+			<set-variable value="#[Mule::p('APIKIT_METHOD_NOT_ALLOWED')]" doc:name="set-the-http-status-message-405" doc:id="b4c4f092-46da-4a05-8400-7f4d18c829dd" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="7e730fc7-8e7c-4ac9-bb7b-b04c71008e38" name="global-error-response"/>
+		</on-error-continue>
+		<on-error-continue type="APIKIT:NOT_ACCEPTABLE" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="c4315a1a-be61-4e27-ab62-0c3b00444a97" >
+			<set-variable value="#[406]" doc:name="set-the-http-status-406" doc:id="f6473e0e-0752-4403-9625-f71053e5b1e2" variableName="httpStatus" />
+			<set-variable value="#[Mule::p('APIKIT_NOT_ACCEPTABLE')]" doc:name="set-the-http-status-message-406" doc:id="1a3c7773-7d44-4b54-b173-4ee96414afd1" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="31e62d57-c136-4d73-b093-a28a48a9110e" name="global-error-response"/>
+		</on-error-continue>
+		<on-error-continue type="APIKIT:NOT_FOUND" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="9f1de48e-c8be-427f-8512-6eef8cb4c0c8" >
+			<set-variable value="#[404]" doc:name="set-the-http-status-404" doc:id="fb61457d-53e3-4c84-8380-8d5756ead3df" variableName="httpStatus" />
+      		<set-variable value="#[Mule::p('APIKIT_NOT_FOUND')]" doc:name="set-the-http-status-message-404" doc:id="62a1561e-6b7b-4ab7-a336-e99dd88855df" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="db251916-ac7d-4fe3-b6f4-7165995f3d80" name="global-error-response"/>
+		</on-error-continue>
+		<on-error-continue type="APIKIT:UNSUPPORTED_MEDIA_TYPE" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="d3640722-8003-46db-8855-b82a02f4f7d6" >
+			<set-variable value="#[415]" doc:name="set-the-http-status-415" doc:id="905bbc72-4c97-434e-a427-f699632640b1" variableName="httpStatus" />
+      		<set-variable value="#[Mule::p('APIKIT_UNSUPPORTED_MEDIA_TYPE')]" doc:name="set-the-http-status-message-415" doc:id="bf2892c5-82a1-43c9-add8-c7a785d9e00f" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="02d71af2-b6f5-4a94-a6b7-de58e005ed20" name="global-error-response"/>
+		</on-error-continue>	
+		
+		
+		<!-- HTTP Requster Related error handling -->	
+		<on-error-continue type="HTTP:BAD_REQUEST" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="9f33528e-15e6-4a67-9a95-2ddab8756c1b" >
+			<set-variable value="#[400]" doc:name="set-the-http-status-400" doc:id="f0088419-1f34-48d4-a7ab-f05f3fd5cce8" variableName="httpStatus" />
+			<set-variable value="#[Mule::p('HTTP_BAD_REQUEST')]" doc:name="set-the-http-status-message-400" doc:id="fd545f76-5f5d-4436-9a6d-d0fc6eb8c318" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="79f0e528-b2ad-46b1-828e-09cc4acf3499" name="global-error-response"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:CLIENT_SECURITY" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="263e71ab-8ea7-425c-938f-471dec1ff591" >
+			<set-variable value="#[401]" doc:name="set-the-http-status-401" doc:id="bd81125a-ad7d-4726-97f1-7db1dae911c6" variableName="httpStatus" />
+      		<set-variable value="#[Mule::p('HTTP_CLIENT_SECURITY')]" doc:name="set-the-http-status-message-401" doc:id="3904898d-fe29-48c9-9cd3-3fef5ab93f4d" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="3b939a74-2612-4248-a86b-8b37ef7476f7" name="global-error-response"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:CONNECTIVITY" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b0f9eec8-2652-4234-8ad3-aabfd3fce9f2" >
+			<set-variable value="#[503]" doc:name="set-the-http-status-503" doc:id="d6f81dcb-cc85-4b8c-9327-e8880a8b9db0" variableName="httpStatus" />
+      		<set-variable value="#[Mule::p('HTTP_CONNECTIVITY')]" doc:name="set-the-http-status-message-503" doc:id="24e137e5-c067-435d-af6e-20ffb2cf6fd6" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="a2e579af-541b-4a22-acdb-f22912115a32" name="global-error-response"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:FORBIDDEN" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="f276ab14-0f29-4394-99ca-e451f2c5a541" >
+			<set-variable value="#[403]" doc:name="set-the-http-status-403" doc:id="482f9663-e4db-4189-960b-52fde790c022" variableName="httpStatus" />
+      		<set-variable value="#[Mule::p('HTTP_FORBIDDEN')]" doc:name="set-the-http-status-message-403" doc:id="71f7f5e2-d637-4af8-b232-d1e614b9faba" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="fcf57be9-58eb-4201-b447-0679e6dae865" name="global-error-response"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:INTERNAL_SERVER_ERROR" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="c9bcf5c9-84fd-46e9-91d3-6563a5a62b82" >
+			<set-variable value="#[500]" doc:name="set-the-http-status-500" doc:id="5dd56697-b462-4965-a14f-a993bccf521f" variableName="httpStatus" />
+      		<set-variable value="#[Mule::p('HTTP_INTERNAL_SERVER_ERROR')]" doc:name="set-the-http-status-message-500" doc:id="d5251d58-7d5d-4e33-916e-e2a603dc0d27" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="fcb1d84a-b3de-4742-b527-cc16aac4ba17" name="global-error-response"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:METHOD_NOT_ALLOWED" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="06fac24c-20a7-43f8-b40b-64dc87522422" >
+			<set-variable value="#[405]" doc:name="set-the-http-status-405" doc:id="6cdd5dc8-0532-4d85-bf5e-262daaa60dce" variableName="httpStatus" />
+			<set-variable value="#[Mule::p('HTTP_METHOD_NOT_ALLOWED')]" doc:name="set-the-http-status-message-405" doc:id="767ea916-ded2-40b8-a9eb-ff8ed731692a" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="667e397e-9940-475f-993e-67294c9e6237" name="global-error-response"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:NOT_ACCEPTABLE" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="15740d9a-05fa-437c-bd24-359708031a1c" >
+			<set-variable value="#[406]" doc:name="set-the-http-status-406" doc:id="286989fd-cf37-40b7-a799-920fe9935024" variableName="httpStatus" />
+      		<set-variable value="#[Mule::p('HTTP_NOT_ACCEPTABLE')]" doc:name="set-the-http-status-message-406" doc:id="657c501b-ed92-4866-b07c-9f69f75d8a43" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="2b93e7d3-dd6a-49c4-9b9f-66c41861dede" name="global-error-response"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:NOT_FOUND" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="8292ed8c-676d-4d5c-9bee-af05ad073c8f" >
+			<set-variable value="#[404]" doc:name="set-the-http-status-404" doc:id="79143ce5-dac6-4d49-9ed0-d92870839c97" variableName="httpStatus" />
+      		<set-variable value="#[Mule::p('HTTP_NOT_FOUND')]" doc:name="set-the-http-status-message-404" doc:id="cf5274e1-3f6c-4e39-8b9e-cb84512549ea" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="01189239-af48-429d-ad31-ff66072f56ff" name="global-error-response"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:PARSING" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="9765da1c-c233-4cf2-a160-2683d994035d" >
+			<set-variable value="#[400]" doc:name="set-the-http-status-400" doc:id="a7670651-2647-422f-b410-9c22f911c96e" variableName="httpStatus" />
+      		<set-variable value="#[Mule::p('HTTP_PARSING')]" doc:name="set-the-http-status-message-400" doc:id="73b122ea-6056-46d8-8762-619d1218f94b" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="cd71e016-01e9-42dd-a912-155616c54378" name="global-error-response"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:RETRY_EXHAUSTED" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="c56e8a3b-359b-498b-8d2c-0dd4c3dd095b" >
+			<set-variable value="#[503]" doc:name="set-the-http-status-503" doc:id="0fa0e4c6-a7ca-4ed7-9a8a-dab3e5f0ef57" variableName="httpStatus" />
+      		<set-variable value="#[Mule::p('HTTP_RETRY_EXHAUSTED')]" doc:name="set-the-http-status-message-503" doc:id="beba75f8-0d4e-48d9-81bc-2745a2a6c307" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="91fb2314-7574-47f9-8ee0-e7950c2e3f8e" name="global-error-response"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:SECURITY" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="68790d8c-4ac8-4895-8f93-6965bdaf0730" >
+			<set-variable value="#[401]" doc:name="set-the-http-status-401" doc:id="b7d05413-177a-4c18-a4ec-640f5f11466a" variableName="httpStatus" />
+      		<set-variable value="#[Mule::p('HTTP_SECURITY')]" doc:name="set-the-http-status-message-401" doc:id="40e0e86e-0460-4df2-9d38-31fd1f51c5c7" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="80f96a02-f34f-45f6-bae9-7bbbeca60e8d" name="global-error-response"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:TIMEOUT" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="77faeb58-1c40-4015-8e71-d5d8153e20bf" >
+			<set-variable value="#[504]" doc:name="set-the-http-status-504" doc:id="5c16d0c6-e7ac-4f79-9c00-af2aca8310ce" variableName="httpStatus" />
+      		<set-variable value="#[Mule::p('HTTP_TIMEOUT')]" doc:name="set-the-http-status-message-504" doc:id="70c5f01c-e2b8-4371-9e55-96811fb95d2b" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="cb93244f-492c-43c7-b644-5d2e4f7a9ac9" name="global-error-response"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:TOO_MANY_REQUESTS" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="ae78f71d-0b66-4d79-b096-ec02f087eaa4" >
+			<set-variable value="#[429]" doc:name="set-the-http-status-429" doc:id="0d400628-78f7-4841-a71d-37093f6bb66a" variableName="httpStatus" />
+      		<set-variable value="#[Mule::p('HTTP_TOO_MANY_REQUESTS')]" doc:name="set-the-http-status-message-429" doc:id="b366fdb8-bc3d-456b-9880-f3386c690ac0" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="73a95815-42de-4e66-beb8-f1122d65135f" name="global-error-response"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:UNAUTHORIZED" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="559b048d-a163-4fa7-b21b-574f8455d804" >
+			<set-variable value="#[403]" doc:name="set-the-http-status-403" doc:id="db138619-e02f-414e-843a-2d2c0dcf442d" variableName="httpStatus" />
+      		<set-variable value="#[Mule::p('HTTP_UNAUTHORIZED')]" doc:name="set-the-http-status-message-403" doc:id="6ec27bc2-2f68-400f-a730-247ed60ab619" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="b79cb300-31af-4309-897f-18224ba6f001" name="global-error-response"/>
+		</on-error-continue>
+		<on-error-continue type="HTTP:UNSUPPORTED_MEDIA_TYPE" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="2b93ebb2-54c3-464b-bc99-a660ca8e1ff5" >
+			<set-variable value="#[415]" doc:name="set-the-http-status-415" doc:id="62e66eab-9635-4a71-8351-167602606ee0" variableName="httpStatus" />
+      		<set-variable value="#[Mule::p('HTTP_UNSUPPORTED_MEDIA_TYPE')]" doc:name="set-the-http-status-message-415" doc:id="a165f654-461d-4727-bbc7-100d09b1c3f0" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="7da64c54-bdf0-40fc-88fb-9a85decc3fd7" name="global-error-response"/>
+		</on-error-continue>
+		<!-- <on-error-continue type="HTTP:BAD_GATEWAY" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="84e39923-71c6-48d5-8414-c635687bb529" >
+			<set-variable value="#[502]" doc:name="Set the HTTP Status - 502" doc:id="9c75ad82-f37a-458a-b79b-a872e76bab10" variableName="httpStatus" />
+      		<flow-ref doc:name="global-error-response" doc:id="6df14fe9-4547-482a-9682-21b3e093893b" name="global-error-response"/>
+		</on-error-continue> -->
+		
+		<!-- Generic CONNECTIVITY Related Exception handling start. Order matters -->
+		<on-error-continue type="RETRY_EXHAUSTED" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="904b571a-0979-4e2e-8c61-52d2c97cc3a3" >
+			<set-variable value="#[(vars.httpStatus default 503)]" doc:name="set-the-http-status-503" doc:id="da8845f7-bb20-42b4-8f9b-6349c72d49ec" variableName="httpStatus" />
+      		<set-variable value="#[Mule::p('RETRY_EXHAUSTED')]" doc:name="set-the-http-status-message-503" doc:id="09ade874-2c82-4350-a919-372f6a3a74a9" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="b92bc666-461f-4d5d-b9ae-0cd9b5f9f1c1" name="global-error-response"/>
+		</on-error-continue>
+		<on-error-continue type="REDELIVERY_EXHAUSTED" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="e6b5f0a3-93e9-4cdd-8804-b7c907db5831" >
+			<set-variable value="#[503]" doc:name="set-the-http-status-503" doc:id="b89eb09f-3a06-4cb3-81d5-5e7028d705a1" variableName="httpStatus" />
+      		<set-variable value="#[Mule::p('REDELIVERY_EXHAUSTED')]" doc:name="set-the-http-status-message-503" doc:id="a923a24a-25c5-4625-b8aa-da72e9861f8c" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="83486cf7-b250-451b-bffa-ae748f3ef046" name="global-error-response"/>
+		</on-error-continue>
+		<!-- Generic CONNECTIVITY Exception handling end -->
+		
+		<on-error-continue type="TRANSFORMATION" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="6f0bd16a-d757-4c40-a00d-2d50fb3204b5" >
+			<set-variable value="#[500]" doc:name="set-the-http-status-500" doc:id="a68fb52e-e3c0-4367-8916-d9cc060ce158" variableName="httpStatus" />
+      		<set-variable value="#[Mule::p('TRANSFORMATION')]" doc:name="set-the-http-status-message-500" doc:id="276afb83-d5f3-4ce2-810a-193392354ad9" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="3448d04e-c71b-488b-8973-6e4ccebc2e2f" name="global-error-response"/>
+		</on-error-continue>
+		
+		<on-error-continue type="EXPRESSION" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="420b4678-5861-4f25-b1f3-f0eb240070b9" >
+			<set-variable value="#[500]" doc:name="set-the-http-status-500" doc:id="e6451f2b-8ab1-44d3-8249-1a7fc99baa4e" variableName="httpStatus" />
+			<set-variable value="#[Mule::p('EXPRESSION')]" doc:name="set-the-http-status-message-500" doc:id="359e2705-d1a1-4aef-9c46-d475e5700526" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="e848097a-0b48-42b9-91aa-37b8d6647956" name="global-error-response"/>
+		</on-error-continue>	
+		<on-error-continue type="ROUTING" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="649cc9c4-9cdc-4578-98c1-5074f417b7cd" >
+			<set-variable value="#[500]" doc:name="set-the-http-status-500" doc:id="3feedc7b-275e-4577-8e80-040421d87c22" variableName="httpStatus" />
+      		<set-variable value="#[Mule::p('ROUTING')]" doc:name="set-the-http-status-message-500" doc:id="e5f155c4-8c3e-4b90-9a15-a428e92b4b29" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="f7f7ed21-a578-429d-9c8d-2e7a20eea49e" name="global-error-response"/>
+		</on-error-continue>
+		
+		<on-error-continue type="DB:BAD_SQL_SYNTAX" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="d8966452-e8cd-4bd0-921b-7d173e346aff">
+        <set-variable value="#[400]" doc:name="set-the-http-status-400" variableName="httpStatus"/>
+        <set-variable value="#[Mule::p('DB_BAD_SQL_SYNTAX')]" doc:name="set-the-status-message" variableName="statusMessage"/>
+        <flow-ref doc:name="global-error-response" name="global-error-response"/>
+    </on-error-continue>
+
+    <on-error-continue type="DB:CANNOT_LOAD_DRIVER" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="a1627ba8-e0db-49de-ab37-45eba4dcb21b">
+        <set-variable value="#[500]" doc:name="set-the-http-status-500" variableName="httpStatus"/>
+        <set-variable value="#[Mule::p('DB_CANNOT_LOAD_DRIVER')]" doc:name="set-the-status-message" variableName="statusMessage"/>
+        <flow-ref doc:name="global-error-response" name="global-error-response"/>
+    </on-error-continue>
+
+    <on-error-continue type="DB:CANNOT_REACH" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="478318d2-cd3d-45ce-b44b-c679996f53d2">
+        <set-variable value="#[500]" doc:name="set-the-http-status-500" variableName="httpStatus"/>
+        <set-variable value="#[Mule::p('DB_CANNOT_REACH')]" doc:name="set-the-status-message" variableName="statusMessage"/>
+        <flow-ref doc:name="global-error-response" name="global-error-response"/>
+    </on-error-continue>
+
+    <on-error-continue type="DB:CONNECTIVITY" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="3ebbc70f-ccbe-445a-bb53-12a1c80bf7da">
+        <set-variable value="#[503]" doc:name="set-the-http-status-503" variableName="httpStatus"/>
+        <set-variable value="#[Mule::p('DB_CONNECTIVITY')]" doc:name="set-the-status-message" variableName="statusMessage"/>
+        <flow-ref doc:name="global-error-response" name="global-error-response"/>
+    </on-error-continue>
+
+    <on-error-continue type="DB:INVALID_DATABASE" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="aca55127-46fb-4d79-84c6-ccc8f11e8d9d">
+        <set-variable value="#[400]" doc:name="set-the-http-status-400" variableName="httpStatus"/>
+        <set-variable value="#[Mule::p('DB_INVALID_DATABASE')]" doc:name="set-the-status-message" variableName="statusMessage"/>
+        <flow-ref doc:name="global-error-response" name="global-error-response"/>
+    </on-error-continue>
+
+    <on-error-continue type="DB:INVALID_CREDENTIALS" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="50458a1c-828c-4935-a7e7-3d11db77bc00">
+        <set-variable value="#[401]" doc:name="set-the-http-status-401" variableName="httpStatus"/>
+        <set-variable value="#[Mule::p('DB_INVALID_CREDENTIALS')]" doc:name="set-the-status-message" variableName="statusMessage"/>
+        <flow-ref doc:name="global-error-response" name="global-error-response"/>
+    </on-error-continue>
+
+    <on-error-continue type="DB:QUERY_EXECUTION" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="12612a8f-6bc3-4193-b61a-1f8581204df5">
+        <set-variable value="#[500]" doc:name="set-the-http-status-500" variableName="httpStatus"/>
+        <set-variable value="#[Mule::p('DB_QUERY_EXECUTION')]" doc:name="set-the-status-message" variableName="statusMessage"/>
+        <flow-ref doc:name="global-error-response" name="global-error-response"/>
+    </on-error-continue>
+
+    <on-error-continue type="DB:RETRY_EXHAUSTED" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="66295894-3a5b-46df-bbce-ff8a044de55b">
+        <set-variable value="#[503]" doc:name="set-the-http-status-503" variableName="httpStatus"/>
+        <set-variable value="#[Mule::p('DB_RETRY_EXHAUSTED')]" doc:name="set-the-status-message" variableName="statusMessage"/>
+        <flow-ref doc:name="global-error-response" name="global-error-response"/>
+    </on-error-continue>
+		
+		<!-- If none of the above matches then handle a the exception using generic handler -->
+		<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="18054d41-9a29-436b-8a14-ead1597dbbb3" type="SALESFORCE:INVALID_INPUT">
+			<set-variable value="#[400]" doc:name="set-the-http-status-400" doc:id="f4330651-ccea-4456-a8e2-1d9cf4172088" variableName="httpStatus" />
+			<set-variable value="#[Mule::p('SALESFORCE_INVALID_INPUT')]" doc:name="set-the-http-status-message-400" doc:id="60ef5e0f-2566-4d1f-baa0-cf05503e9999" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="b5a3bf68-0ca9-4fda-be0e-9bbcec2f944c" name="global-error-response" />
+		</on-error-continue>
+		<on-error-continue type="ANY" enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="9b677d46-4553-4b50-a351-07f5d1fa78db">
+			<set-variable value="#[(vars.httpStatus default 500)]" doc:name="set-the-http-status-500" variableName="httpStatus" />
+			<set-variable value="#[Mule::p('INTERNAL_SERVER_ERROR')]" doc:name="set-the-http-status-message-500" doc:id="51e23f1f-c578-4ee2-90b4-07bf78bd081f" variableName="statusMessage" />
+			<flow-ref doc:name="global-error-response" doc:id="685d0504-79cd-470a-8abb-6906ecfafbff" name="global-error-response" />
+		</on-error-continue>
+	</error-handler>
+	
+	<sub-flow name="global-error-response" doc:id="de22f408-5c16-4a02-852b-185a2df45354">
+		<ee:transform doc:name="compose-error-payload" doc:id="a06c7bd4-1c01-4a40-b36c-96d067e48342">
+			<ee:message>
+				<ee:set-payload resource="dwl/globalErrorResponse.dwl" />
+			</ee:message>
+		</ee:transform>
+		<json-logger:logger doc:name="log-exception" doc:id="e156af18-d59e-4668-8639-8ae79bf3e031" config-ref="jsonLoggerConfigEror" message="Exception occured in the flow" tracePoint="EXCEPTION" >
+			<json-logger:content ><![CDATA[#[%dw 2.0
+import modules::JSONLoggerModule 
+output application/json ---
+{
+    
+    #"applicationId": vars.jsonLoggerObject.applicationId,
+   # "arn": vars.jsonLoggerObject.arn,
+    "correlationId": correlationId,
+    "apiLayer": vars.jsonLoggerObject.apiLayer,
+    "endSystem": vars.jsonLoggerObject.endSystem,
+    "errorPayload": payload
+    
+}]]]></json-logger:content>
+		</json-logger:logger>
+    </sub-flow>
+</mule>

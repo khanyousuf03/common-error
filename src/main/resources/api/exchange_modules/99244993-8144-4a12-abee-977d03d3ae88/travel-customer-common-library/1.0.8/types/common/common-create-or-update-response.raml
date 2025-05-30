@@ -1,0 +1,37 @@
+#%RAML 1.0 DataType
+type: object
+properties:
+  statusCode:
+    type: string
+    description: HTTP status code
+    example: "200"
+  correlationId:
+    type: string
+    description: Correlation ID for tracking the request
+    example: "6d5d83d0-2df4-11ef-9971-02a584aeafd9"
+  statusType:
+    type: string
+    description: Type of the status
+    example: "HTTP:OK"
+  statusMessage:
+    type: string
+    description: Message related to the status
+    example: "The request has succeeded."
+  timestamp:
+    type: string
+    description: Timestamp of the response
+    example: "2020-06-15T15:13:10"
+  data:
+    type: object
+    description: 'Data payload for success responses'
+    example: 
+        {
+          "packetId": 1,
+          "resetInd": true,
+          "packetSummary": {
+            "processed": 130,
+            "success": 115,
+            "error": 10,
+            "warning": 5
+      }
+    }

@@ -1,0 +1,6 @@
+
+tls.client.truststore:
+  type: "pkcs12"
+  path: "certs/hdfc-common.p12"
+  alias: "server"
+

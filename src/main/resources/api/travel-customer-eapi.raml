@@ -1,0 +1,67 @@
+#%RAML 1.0
+title: travel-customer-eapi API
+baseUri: 
+mediaType:
+ - application/json
+protocols:
+ - HTTPS
+
+uses:
+  customerLib: /exchange_modules/99244993-8144-4a12-abee-977d03d3ae88/travel-customer-common-library/1.0.8/travel-customer-common-library.raml
+
+/customers: 
+  get:
+    is:
+      - customerLib.error-responses
+      - customerLib.correlation-id
+
+    description: Reterive all the customers based on date created/updated
+    displayName: Get all the customers based on date created/updated
+    queryParameters:
+      startDate:
+        description: Based on start date it will show the data
+        example: 2024-08-01T15:50:32Z
+        type: datetime
+      endDate:
+        description: Based on end date it will show the data
+        example: 2024-08-01T15:50:32Z
+        type: datetime
+    responses:
+      200:
+        body:
+          application/json:
+            type: customerLib.Customer[]   
+  /{customerId}:
+    description: Reterive the single customer by customerId
+    uriParameters:
+      customerId:
+        type: string
+        example: "12345"
+    get:
+      is:
+        - customerLib.error-responses
+        - customerLib.correlation-id
+      
+      displayName: Get customers by customer ID
+      responses:
+        200:
+          body:
+            application/json:
+              type: customerLib.Customer
+  post:
+    is: 
+    - customerLib.error-responses
+    - customerLib.correlation-id
+
+    description: Create the new customer data 
+    displayName: Insert new customer data
+    body:
+      application/json:
+        type: customerLib.Customer
+    responses:
+      201:
+        body:
+          application/json:
+            type: customerLib.CommonCreateOrUpdateResponse
+            example: !include examples/create-customer-example.json
+          

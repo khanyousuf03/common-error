@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<json-logger:config name="jsonLoggerConfigEror" doc:name="JSON Logger Config" doc:id="a6a56c9d-6847-4e9f-b3cd-8a3b4d6a0c3e" environment="dev" />
+	<configuration-properties doc:name="generalCommonConfigProperties" doc:id="07298353-9833-4424-baaa-06f3eadbeb1f" file="properties/config-capps-common.yaml" />
+	<configuration-properties doc:name="envCommonConfigProperties" doc:id="57055daf-7424-46ee-bf6f-ab9dbb474fcb" file="properties/config-capps-dev.yaml" />
+	<global-property doc:name="Global Property" doc:id="aca6eccd-c404-4b8d-b3ad-8fa54f52ab4b" name="dev" value="env" />
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="2dcb9721-3de7-4e06-98bc-d0a3434b611e" >
+		<salesforce:basic-connection username="test" password="Mulesoft@18" securityToken="bHUYG070kKXPJiZQxmjlHQ2VF" />
+	</salesforce:sfdc-config>
+</mule>

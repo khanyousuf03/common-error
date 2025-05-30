@@ -1,0 +1,37 @@
+#%RAML 1.0 DataType
+description: Error response body
+type: object
+properties:
+  correlationId: 
+    required: true
+    type: string
+    description: correlation id used for processing
+    example: "6d5d83d0-2df4-11ef-9971-02a584aeafd9"
+  errorType: 
+    required: true
+    type: string
+    description: Type of error, with the namespace
+    example: "HTTP:CONNECTIVITY"
+  errorMessage:
+    required: true
+    type: string
+    description: Error message
+    example: "There was a problem connecting to the backend"
+  errorCode:
+        type: string
+        description: A unique code identifying the error.
+        example: 'API_GET_001'
+        required: true
+  timestamp:
+        type: string
+        required: true
+        description: A timestamp identifying the time of the error.
+        example: "2020-01-01T00:00:01"
+  additionalDetails: 
+    required: false
+    type: string
+    description: Additional details of error
+    example: "Backend is not reachable"
+   
+
+  

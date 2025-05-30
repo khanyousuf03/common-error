@@ -1,0 +1,6 @@
+tls.keystore:
+ password: ""
+ keyPassword: ""
+
+tls.truststore:
+ password: ""
